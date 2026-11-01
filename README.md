@@ -1,7 +1,7 @@
 # 🎬 LetterDeck — Smart Cinema & Music Desk Display
 ## ESP32-2432S028 (CYD 2.8" ST7789 320×240 + Touch XPT2046)
 
-Dispositivo de sobremesa autónomo que muestra recomendaciones de películas, pósters oficiales de alta calidad, fichas técnicas y citas célebres con la estética oscura y minimalista de **Letterboxd**.
+Dispositivo de sobremesa inteligente y dual que combina un **recomendador de cine estilo Letterboxd** con un **visualizador interactivo de Apple Music / Spotify / Windows Media**.
 
 ![Vista Previa Letterboxd](tools/preview_cinema.png)
 
@@ -9,83 +9,67 @@ Dispositivo de sobremesa autónomo que muestra recomendaciones de películas, p�
 
 ## ✨ Características principales
 
-1. **Calendario Dinámico los 365 Días del Año**:
-   - 📅 **Película del Día**: Cada día a medianoche se calcula matemáticamente una película destacada del día con insignia dedicada y la fecha en pantalla (ej: `31 OCT`, `01 NOV`).
+1. **Modo Dual Cine + Música (Híbrido Inteligente)**:
+   - **`[AUTO]`**: En reposo muestra las recomendaciones cinematográficas del día. Cuando empieza a sonar música en tu ordenador, la pantalla conmuta automáticamente en tiempo real al visualizador de Now Playing con controles táctiles (Play/Pausa, Siguiente, Anterior). Al detenerse la música, vuelve a Cine de manera fluida.
+   - **`[CINE]`**: Modo exclusivo de cine independiente.
+   - **`[MUS]`**: Modo exclusivo de música con pantalla de espera decorativa.
+2. **Calendario Dinámico 365 Días + Temporadas Especiales**:
+   - 📅 **Película del Día**: Algoritmo matemático que destaca una obra maestra cada día del año con su fecha en pantalla (ej: `31 OCT`).
    - 🎃 **Especial Halloween / Terror** *(15 Oct – 4 Nov)*: *The Shining, Halloween, Scream, Psycho, Alien, The Thing, The Silence of the Lambs, Hereditary...*
    - 🎄 **Especial Navidad / Invierno** *(1 Dic – 6 Ene)*: *Die Hard, Home Alone, The Nightmare Before Christmas, It's a Wonderful Life...*
    - 🏆 **Temporada de Premios Oscar** *(15 Ene – 15 Mar)*: *Parasite, The Godfather, Whiplash, The Silence of the Lambs...*
-   - ⭐ **Grandes Hitos y Top Letterboxd** *(Resto del año)*: *Pulp Fiction, The Matrix, Interstellar, Blade Runner 2049, Fight Club...*
-2. **Curiosidades y Anécdotas de Rodaje**:
-   - Cada película incluye datos reales de producción, secretos de set y anécdotas de rodaje (por ejemplo, las hachas reales de Kubrick en *The Shining*, la máscara del Capitán Kirk de 2$ en *Halloween*, las llamadas reales del doblador en *Scream* o el chocolate usado en la ducha de *Psycho*).
-3. **Soporte Bilingüe Español / Inglés (`ES` / `EN`)**:
-   - Selector táctil directo en la cabecera `[ES | EN]` y mediante la web Wi-Fi.
-   - Guardado permanente en memoria interna NVRAM.
-   - En inglés muestra las citas originales de Hollywood (*"Here's Johnny!"*, *"I'm gonna make him an offer he can't refuse"*), curiosidades en inglés y etiquetas internacionales.
-4. **Modo Dual Música + Cine (Apple Music)**:
-   - **Híbrido Inteligente (`AUTO`)**: La pantalla muestra las recomendaciones de cine; al reproducir música en el PC con `nowplaying.py`, cambia en milisegundos a la interfaz de Apple Music con controles táctiles (play/pausa, progreso, volumen). Al pausar la música, regresa suavemente a modo Cine.
-   - **Selector de Modo en pantalla (`[AUTO]` / `[CINE]` / `[MUS]`)**: Permite fijar el modo deseado o configurarlo desde `http://<IP_CYD>`.
-5. **Pósters Oficiales TMDb Integrados**:
-   - Pósters oficiales de $108 \times 162$ px renderizados en Flash con `TJpg_Decoder` en menos de 18 ms.
-6. **Navegación Táctil e Inteligente**:
-   - **Tocar la mitad izquierda (póster / botón inferior)**: Alterna cíclicamente entre **Cita Célebre** ➔ **Curiosidad de Rodaje** ➔ **Sinopsis**.
-   - **Tocar la mitad derecha**: Pasa inmediatamente a la siguiente recomendación.
-   - **Tocar la esquina superior derecha**: Conmuta idioma `[ES/EN]` y modo de funcionamiento.
+   - ⭐ **Grandes Hitos Top Letterboxd** *(Resto del año)*: *Pulp Fiction, The Matrix, Interstellar, Blade Runner 2049, Fight Club...*
+3. **Curiosidades de Rodaje, Citas Célebres y Sinopsis**:
+   - Toca el área izquierda de la pantalla para alternar entre la cita icónica de la película, una anécdota real de rodaje o la sinopsis.
+4. **Soporte Bilingüe Español / Inglés (`[ES]` / `[EN]`)**:
+   - Selector táctil directo en la barra inferior o mediante el portal web de configuración.
+   - Citas en versión original en inglés (*"Here's Johnny!"*, *"I'm gonna make him an offer he can't refuse"*), trivia traducida y etiquetas contextuales.
+5. **Pósters Oficiales TMDb en Alta Calidad**:
+   - Decodificación ultra-rápida en memoria flash mediante `TJpg_Decoder`.
 
 ---
 
 ## 🛠️ Estructura del proyecto
 
 ```
-cyd-cinema/
+letterdeck/
 ├── platformio.ini              ← Configuración optimizada con driver ST7789 y librerías
 ├── src/
-│   ├── main.cpp                ← Bucle principal, Wi-Fi, servidor web y eventos táctiles
+│   ├── main.cpp                ← Bucle principal, conmutador de modo, Wi-Fi y táctil
 │   ├── config.h                ← Credenciales Wi-Fi, rotación, intervalo de cambio
-│   ├── movies_db.h             ← Base de datos integrada con películas, citas y sinopsis
-│   ├── ui_cinema.h             ← Motor de renderizado estilo Letterboxd
-│   ├── poster_fetcher.h        ← Descarga HTTP(S) y decodificador JPEG
+│   ├── movies_db.h             ← Base de datos integrada con películas y curiosidades
+│   ├── ui_cinema.h             ← Motor gráfico estilo Letterboxd con controles
+│   ├── poster_fetcher.h        ← Descarga y renderizado de imágenes JPEG
 │   └── touch_controller.h      ← Controlador táctil XPT2046 (bus HSPI)
-├── data/
-│   └── feed.json               ← Ejemplo de feed dinámico descargable
+├── pc/
+│   ├── nowplaying.py           ← Puente en Python para Windows Media / Apple Music
+│   ├── requirements.txt        ← Dependencias (winsdk, pillow, pyserial)
+│   └── iniciar.bat             ← Lanzador rápido para segundo plano
 └── tools/
-    ├── preview_card.py         ← Generador de vista previa en PC con Pillow
-    ├── preview_cinema.png      ← Imagen de muestra de la interfaz
-    └── sync_letterboxd.py      ← Importador de listas CSV de Letterboxd a JSON
+    ├── preview_cinema.png      ← Muestra de la interfaz
+    └── sync_letterboxd.py      ← Importador de listas de Letterboxd a JSON
 ```
 
 ---
 
-## 🚀 Cómo grabarlo en tu CYD (ESP32-2432S028)
+## 🚀 Cómo ponerlo en marcha
 
-### Opción A: Con PlatformIO (Recomendada)
-1. Conecta la CYD por cable USB al ordenador.
-2. Abre la carpeta `cyd-cinema` en VS Code con PlatformIO.
-3. (Opcional) Abre `src/config.h` y pon el nombre de tu Wi-Fi en `WIFI_SSID` y la clave en `WIFI_PASS`.
-4. Haz clic en **Upload** (icono de la flecha en la barra inferior) o ejecuta:
+### 1. Flashear el ESP32 CYD con PlatformIO
 ```powershell
 pio run -t upload --upload-port COM3
 ```
 
----
-
-### Opción B: Con Arduino IDE
-Configura tu Arduino IDE con los siguientes ajustes:
-- **Placa**: `ESP32 Dev Module`
-- **Partición**: `Minimal SPIFFS (1.9MB APP with OTA/190KB SPIFFS)`
-- **Librerías a instalar**:
-  1. `TFT_eSPI` (configurar pines en `User_Setup.h` o `User_Setup_Select.h` según `ESPECIFICACIONES_PANTALLA_CYD.md`).
-  2. `TJpg_Decoder` (de Bodmer).
-  3. `ArduinoJson` (de Benoît Blanchon).
-  4. `XPT2046_Touchscreen` (de Paul Stoffregen).
+### 2. Iniciar el puente de música en el PC (Windows)
+```powershell
+cd pc
+pip install -r requirements.txt
+python nowplaying.py
+```
+*¡Y listo! Al poner música en Apple Music o Spotify, LetterDeck mostrará la carátula y el título. Al pausarla, regresará al cine de forma automática.*
 
 ---
 
-## 📱 Control por puerto Serie (cuando está conectado al PC)
+## 📂 Familia de proyectos relacionados
 
-Si tienes la pantalla conectada al PC mientras trabajas, puedes controlarla desde cualquier monitor serie a 115200 baudios:
-- Enviar `NEXT` o `n`: Siguiente película.
-- Enviar `PREV` o `p`: Película anterior.
-- Enviar `TOGGLE` o `t`: Alternar entre cita célebre y sinopsis.
-- Enviar `HALLOWEEN`: Forzar modo especial de terror.
-- Enviar `NAVIDAD`: Forzar modo navideño.
-- Enviar `ALL`: Modo variado normal.
+- 🎬 [**cyd-cinema**](https://github.com/homecitizen/cyd-cinema): Versión autónoma dedicada **exclusivamente a cine** (sin requerir ordenador ni música).
+- 🎵 [**cyd-apple-music**](https://github.com/homecitizen/cyd-apple-music): Versión dedicada **exclusivamente a música** (pantalla Now Playing para escritorio con LED RGB ambiental).
