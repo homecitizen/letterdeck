@@ -20,7 +20,7 @@ LB_CYAN     = (64, 188, 244)    # #40BCF4
 def create_preview(title="The Shining", year=1980, director="Stanley Kubrick",
                    genre="Terror Psicológico", rating=4.3,
                    tag="🎃 ESPECIAL HALLOWEEN", quote="«¡Aquí está Johnny!»",
-                   poster_url="https://image.tmdb.org/t/p/w154/74xTEgt7R36Fpooo50r9T25onhq.jpg",
+                   poster_url="https://image.tmdb.org/t/p/w185/uAR0AWqhQL1hQa69UDEbb2rE5Wx.jpg",
                    output_path="preview_cinema.png"):
     img = Image.new("RGB", (W, H), BG_COLOR)
     d = ImageDraw.Draw(img)
